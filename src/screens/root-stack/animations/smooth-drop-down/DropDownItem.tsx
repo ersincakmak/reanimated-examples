@@ -1,71 +1,62 @@
 import React from 'react';
-import { Text } from 'react-native';
-import { createStyleSheet, useStyles } from '../../../../unistyles/styles';
+import { StyleSheet, Text } from 'react-native';
 
 import Animated, {
-  Easing,
   interpolateColor,
+  SharedValue,
   useAnimatedStyle,
-  useDerivedValue,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import ArrowRight from '../../../../assets/arrow-right.svg';
+import ArrowRight from '../../assets/arrow-right.svg';
 import {
   dropDownItems,
   GAP,
   ITEM_HEIGHT,
   ITEM_WIDTH,
   SPACING,
+  SPRING_DAMPING,
 } from './constants';
 
 type Props = {
   title: string;
+  isOpen: SharedValue<boolean>;
   index: number;
-  isOpen: boolean;
 };
 
-const DropDownItem = ({ title, index, isOpen }: Props) => {
-  const { styles } = useStyles(styleSheet);
-
-  const colorInterpolationNumber = useDerivedValue(() =>
-    withTiming(isOpen ? 1 : 0),
-  );
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    marginTop: withSpring(isOpen ? 0 : -(GAP + ITEM_HEIGHT + SPACING), {
-      damping: 13,
+const DropDownItem = ({ title, isOpen, index }: Props) => {
+  const animatedDropDownItemStyle = useAnimatedStyle(() => ({
+    backgroundColor: withTiming(
+      isOpen.value
+        ? 'hsl(0, 0%, 10%)'
+        : interpolateColor(
+            index + 1,
+            [0, dropDownItems.length],
+            ['hsl(0, 0%, 10%)', 'hsl(0, 0%, 25%)'],
+          ),
+    ),
+    marginTop: withSpring(isOpen.value ? 0 : -(GAP + ITEM_HEIGHT + SPACING), {
+      damping: SPRING_DAMPING,
     }),
     zIndex: 999 - (index + 1),
     width: withTiming(
-      isOpen ? ITEM_WIDTH : ITEM_WIDTH - 2 * SPACING * (index + 1),
-      {
-        easing: Easing.linear,
-      },
-    ),
-    backgroundColor: interpolateColor(
-      colorInterpolationNumber.value,
-      [1, 0],
-      [
-        'hsl(0, 0%, 10%)',
-        `hsl(0, 0%, ${(15 / dropDownItems.length) * (index + 1) + 10}%)`,
-      ],
+      isOpen.value ? ITEM_WIDTH : ITEM_WIDTH - 2 * SPACING * (index + 1),
     ),
   }));
 
   return (
-    <Animated.View style={[styles.container, animatedStyle]}>
+    <Animated.View style={[styles.container, animatedDropDownItemStyle]}>
       <Text style={styles.text}>{title}</Text>
       <ArrowRight fill={'white'} />
     </Animated.View>
   );
 };
 
-const styleSheet = createStyleSheet({
+const styles = StyleSheet.create({
   container: {
     height: ITEM_HEIGHT,
     backgroundColor: 'hsl(0, 0%, 10%)',
-    width: 300,
+    width: ITEM_WIDTH,
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',

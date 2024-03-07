@@ -1,67 +1,64 @@
-import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
-import { createStyleSheet, useStyles } from '../../../../unistyles/styles';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DropDownItem from './DropDownItem';
 
-import ChevronRight from '../../../../assets/chevron-right.svg';
+import ChevronRight from '../../assets/chevron-right.svg';
 import {
   dropDownItems,
   GAP,
   ITEM_HEIGHT,
   ITEM_WIDTH,
   SPACING,
+  SPRING_DAMPING,
 } from './constants';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
 const SmoothDropDown = () => {
-  const { styles } = useStyles(styleSheet);
+  const isOpen = useSharedValue(false);
+  const toggle = () => (isOpen.value = !isOpen.value);
 
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggle = () => setIsOpen(ex => !ex);
-
-  const animatedChevronStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: withTiming(isOpen ? '90deg' : '0deg') }],
+  const animatedChevronContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: withTiming(isOpen.value ? '90deg' : '0deg') }],
   }));
 
-  const animatedToggle = useAnimatedStyle(() => ({
-    marginTop: withSpring(isOpen ? 0 : dropDownItems.length * SPACING, {
-      damping: 13,
-    }),
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    paddingVertical: withSpring(
+      isOpen.value ? 0 : SPACING * dropDownItems.length,
+      { damping: SPRING_DAMPING },
+    ),
   }));
 
   return (
-    <View style={styles.screen}>
-      <Animated.View style={[animatedToggle, styles.animatedContainer]}>
+    <Animated.View style={[styles.dropDownContainer, animatedContainerStyle]}>
+      <View style={[styles.toggleContainer]}>
         <TouchableOpacity
-          style={styles.toggleContainer}
+          style={styles.toggleTouchable}
           activeOpacity={0.7}
           onPress={toggle}>
           <Text style={styles.text}>Header</Text>
-          <Animated.View style={animatedChevronStyle}>
+          <Animated.View style={animatedChevronContainerStyle}>
             <ChevronRight fill={'white'} width={24} height={24} />
           </Animated.View>
         </TouchableOpacity>
-      </Animated.View>
+      </View>
       {dropDownItems.map((item, index) => (
-        <DropDownItem title={item} index={index} key={item} isOpen={isOpen} />
+        <DropDownItem title={item} key={item} index={index} isOpen={isOpen} />
       ))}
-    </View>
+    </Animated.View>
   );
 };
 
-const styleSheet = createStyleSheet({
-  screen: {
-    flex: 1,
+const styles = StyleSheet.create({
+  dropDownContainer: {
     backgroundColor: 'black',
     gap: GAP,
-    paddingTop: 100,
   },
-  animatedContainer: {
+  toggleContainer: {
     backgroundColor: 'hsl(0, 0%, 10%)',
     zIndex: 999,
     width: ITEM_WIDTH,
@@ -69,7 +66,7 @@ const styleSheet = createStyleSheet({
     borderRadius: 8,
     overflow: 'hidden',
   },
-  toggleContainer: {
+  toggleTouchable: {
     width: ITEM_WIDTH,
     height: ITEM_HEIGHT,
     backgroundColor: 'hsl(0, 0%, 10%)',
