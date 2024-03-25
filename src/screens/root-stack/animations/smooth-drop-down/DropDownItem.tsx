@@ -8,7 +8,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import ArrowRight from '../../assets/arrow-right.svg';
+import ArrowRight from '../../../../assets/arrow-right.svg';
 import {
   dropDownItems,
   GAP,

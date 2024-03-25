@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import DropDownItem from './DropDownItem';
 
-import ChevronRight from '../../assets/chevron-right.svg';
+import ChevronRight from '../../../../assets/chevron-right.svg';
 import {
   dropDownItems,
   GAP,
@@ -34,26 +34,33 @@ const SmoothDropDown = () => {
   }));
 
   return (
-    <Animated.View style={[styles.dropDownContainer, animatedContainerStyle]}>
-      <View style={[styles.toggleContainer]}>
-        <TouchableOpacity
-          style={styles.toggleTouchable}
-          activeOpacity={0.7}
-          onPress={toggle}>
-          <Text style={styles.text}>Header</Text>
-          <Animated.View style={animatedChevronContainerStyle}>
-            <ChevronRight fill={'white'} width={24} height={24} />
-          </Animated.View>
-        </TouchableOpacity>
-      </View>
-      {dropDownItems.map((item, index) => (
-        <DropDownItem title={item} key={item} index={index} isOpen={isOpen} />
-      ))}
-    </Animated.View>
+    <View style={styles.screen}>
+      <Animated.View style={[styles.dropDownContainer, animatedContainerStyle]}>
+        <View style={[styles.toggleContainer]}>
+          <TouchableOpacity
+            style={styles.toggleTouchable}
+            activeOpacity={0.7}
+            onPress={toggle}>
+            <Text style={styles.text}>Header</Text>
+            <Animated.View style={animatedChevronContainerStyle}>
+              <ChevronRight fill={'white'} width={24} height={24} />
+            </Animated.View>
+          </TouchableOpacity>
+        </View>
+        {dropDownItems.map((item, index) => (
+          <DropDownItem title={item} key={item} index={index} isOpen={isOpen} />
+        ))}
+      </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: 'black',
+    paddingTop: 40,
+  },
   dropDownContainer: {
     backgroundColor: 'black',
     gap: GAP,
