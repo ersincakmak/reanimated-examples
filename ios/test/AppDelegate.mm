@@ -1,7 +1,6 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
-#import "RNOrientationManager.h"
 
 @implementation AppDelegate
 
@@ -17,16 +16,16 @@
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
+  return [self bundleURL];
+}
+
+- (NSURL *)bundleURL
+{
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
-}
-
-- (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
-{
-    return [RNOrientationManager getSupportedInterfaceOrientations];
 }
 
 @end
