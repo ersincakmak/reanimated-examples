@@ -1,36 +1,37 @@
 import React from 'react';
-import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  SafeAreaView,
-  SectionList,
-} from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
+import { SafeAreaView, SectionList } from 'react-native';
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from 'react-native-reanimated';
 import { createStyleSheet, useStyles } from '../../../../unistyles/styles';
 import HeaderComponent from './components/HeaderComponent';
 import ListItem from './components/ListItem';
 import SectionHeader from './components/SectionHeader';
 import { DATA } from './data';
 
+const AnimatedSectionList = Animated.createAnimatedComponent(
+  SectionList,
+) as new <TItem, TSection>() => SectionList<TItem, TSection>;
+
 const StickyScroll = () => {
   const { styles } = useStyles(styleSheet);
 
   const scrollY = useSharedValue(0);
 
-  const onScroll = ({
-    nativeEvent,
-  }: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrollY.value = nativeEvent.contentOffset.y;
-  };
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: e => {
+      scrollY.value = e.contentOffset.y;
+    },
+  });
 
   return (
     <SafeAreaView style={styles.container}>
-      <SectionList
+      <AnimatedSectionList
         sections={DATA}
         showsVerticalScrollIndicator={false}
         onScroll={onScroll}
-        // eslint-disable-next-line react/no-unstable-nested-components
-        ListHeaderComponent={() => <HeaderComponent scrollY={scrollY} />}
+        ListHeaderComponent={<HeaderComponent scrollY={scrollY} />}
         renderItem={({ item }) => <ListItem {...item} />}
         renderSectionHeader={({ section }) => <SectionHeader {...section} />}
         scrollEventThrottle={12}

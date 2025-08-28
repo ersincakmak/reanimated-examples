@@ -40,6 +40,7 @@ const styleSheet = createStyleSheet({
     borderWidth: 1,
     borderColor: '#EAECF0',
     alignSelf: 'center',
+    marginLeft: -12,
   },
 });
 
